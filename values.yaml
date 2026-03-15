@@ -1,12 +1,4 @@
 POSTGRES_PASSWORD: <postgres_password>
-myCfg:
-  S3_ACCESS_KEY_ID: <access_key_id>
-  S3_SECRET_ACCESS_KEY: <secret_access_key>
-  S3_REGION: <region>
-  S3_BUCKET: <bucket>
-  ALIAS_NAME: <alias_name>
-  CRYPT_PASSWORD: <password>
-  CRYPT_PASSWORD2: <password2>
 
 rclone:
   image: rclone/rclone:sha-6805da6
