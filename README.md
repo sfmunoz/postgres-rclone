@@ -12,7 +12,7 @@ PostgreSQL + Rclone helm chart — deploys PostgreSQL with continuous WAL archiv
 ### From OCI
 
 ```sh
-helm upgrade --install -n dev --create-namespace postgres-rclone oci://ghcr.io/sfmunoz/postgres-rclone --version 0.0.1
+helm upgrade --install -n dev --create-namespace --set postgres.terminationGracePeriodSeconds=10 --version 0.0.2 postgres-rclone oci://ghcr.io/sfmunoz/postgres-rclone
 ```
 
 ### Local
