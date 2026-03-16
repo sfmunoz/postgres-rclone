@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "postgres.fullname" . }}
+  name: {{ include "postgresRclone.fullname" . }}
   labels:
-    {{- include "postgres.labels" . | nindent 4 }}
+    {{- include "postgresRclone.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "postgres.selectorLabels" . | nindent 6 }}
-  serviceName: {{ include "postgres.service.main" . }}
+      {{- include "postgresRclone.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "postgresRclone.service.main" . }}
   replicas: 1
   template:
     metadata:
@@ -17,14 +17,14 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "postgres.labels" . | nindent 8 }}
+        {{- include "postgresRclone.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
       terminationGracePeriodSeconds: {{ .Values.postgres.terminationGracePeriodSeconds | default 60 }}
       initContainers:
-      - name: {{ include "postgres.name" . }}-rclone
+      - name: {{ include "postgresRclone.name" . }}-rclone
         image: {{ .Values.rclone.image }}
         command: ["/bin/sh","-c"]
         args:
@@ -42,7 +42,7 @@ spec:
         - name: vol-shared
           mountPath: /shared
       containers:
-      - name: {{ include "postgres.name" . }}-db
+      - name: {{ include "postgresRclone.name" . }}-db
         image: {{ .Values.postgres.image }}
         command: ["/bin/sh","-c"]
         args:
@@ -51,7 +51,7 @@ spec:
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ include "postgres.secret.superuser.password" . }}
+              name: {{ include "postgresRclone.secret.superuser.password" . }}
               key: POSTGRES_PASSWORD
         - name: EMPTY
           value: {{ .Values.postgres.empty | ternary "yes" "no" | quote }}
@@ -80,15 +80,15 @@ spec:
       volumes:
       - name: vol-c
         secret:
-          secretName: {{ include "postgres.secret.rclone.conf" . }}
+          secretName: {{ include "postgresRclone.secret.rclone.conf" . }}
           items:
           - key: rcloneConf
             path: rclone.conf
       - name: vol-postgres-init
         configMap:
-          name: {{ include "postgres.configmap.init" . }}
+          name: {{ include "postgresRclone.configmap.init" . }}
       - name: vol-docker-entrypoint-initdb-d
         configMap:
-          name: {{ include "postgres.configmap.entrypoint" . }}
+          name: {{ include "postgresRclone.configmap.entrypoint" . }}
       - name: vol-shared
         emptyDir: {}

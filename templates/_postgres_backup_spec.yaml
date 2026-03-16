@@ -1,6 +1,6 @@
-{{- define "postgres.backup.spec" -}}
+{{- define "postgresRclone.backup.spec" -}}
 initContainers:
-- name: {{ include "postgres.name" . }}-rclone
+- name: {{ include "postgresRclone.name" . }}-rclone
   image: {{ .Values.rclone.image }}
   command: ["/bin/sh","-c"]
   args:
@@ -18,11 +18,11 @@ initContainers:
   - name: vol-shared
     mountPath: /shared
 containers:
-- name: {{ include "postgres.name" . }}-backup
+- name: {{ include "postgresRclone.name" . }}-backup
   image: {{ .Values.postgres.image }}
   env:
   - name: PGHOST
-    value: {{ include "postgres.service.main" . }}
+    value: {{ include "postgresRclone.service.main" . }}
   - name: PGPORT
     value: "5432"
   - name: PGDATABASE
@@ -32,7 +32,7 @@ containers:
   - name: PGPASSWORD
     valueFrom:
       secretKeyRef:
-        name: {{ include "postgres.secret.superuser.password" . }}
+        name: {{ include "postgresRclone.secret.superuser.password" . }}
         key: POSTGRES_PASSWORD
   - name: BACKUP_FULL_KEEP
     value: {{ .Values.postgres.backupFullKeep | default 10 | quote }}
@@ -65,13 +65,13 @@ containers:
 volumes:
 - name: vol-c
   secret:
-    secretName: {{ include "postgres.secret.rclone.conf" . }}
+    secretName: {{ include "postgresRclone.secret.rclone.conf" . }}
     items:
     - key: rcloneConf
       path: rclone.conf
 - name: vol-postgres-backup
   configMap:
-    name: {{ include "postgres.configmap.backup" . }}
+    name: {{ include "postgresRclone.configmap.backup" . }}
 - name: vol-shared
   emptyDir: {}
 restartPolicy: OnFailure

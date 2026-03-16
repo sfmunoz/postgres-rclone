@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "postgres.name" -}}
+{{- define "postgresRclone.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "postgres.fullname" -}}
+{{- define "postgresRclone.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "postgres.chart" -}}
+{{- define "postgresRclone.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "postgres.labels" -}}
-helm.sh/chart: {{ include "postgres.chart" . }}
-{{ include "postgres.selectorLabels" . }}
+{{- define "postgresRclone.labels" -}}
+helm.sh/chart: {{ include "postgresRclone.chart" . }}
+{{ include "postgresRclone.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,54 +45,54 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "postgres.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "postgres.name" . }}
+{{- define "postgresRclone.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "postgresRclone.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "postgres.serviceAccountName" -}}
+{{- define "postgresRclone.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "postgres.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "postgresRclone.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
-{{- define "postgres.configmap.init" -}}
-{{ include "postgres.fullname" . }}-init
+{{- define "postgresRclone.configmap.init" -}}
+{{ include "postgresRclone.fullname" . }}-init
 {{- end }}
 
-{{- define "postgres.configmap.backup" -}}
-{{ include "postgres.fullname" . }}-backup
+{{- define "postgresRclone.configmap.backup" -}}
+{{ include "postgresRclone.fullname" . }}-backup
 {{- end }}
 
-{{- define "postgres.configmap.entrypoint" -}}
-{{ include "postgres.fullname" . }}-entrypoint
+{{- define "postgresRclone.configmap.entrypoint" -}}
+{{ include "postgresRclone.fullname" . }}-entrypoint
 {{- end }}
 
-{{- define "postgres.secret.rclone.conf" -}}
-{{ include "postgres.fullname" . }}-rclone-conf
+{{- define "postgresRclone.secret.rclone.conf" -}}
+{{ include "postgresRclone.fullname" . }}-rclone-conf
 {{- end }}
 
-{{- define "postgres.secret.superuser.password" -}}
-{{ include "postgres.fullname" . }}-superuser-password
+{{- define "postgresRclone.secret.superuser.password" -}}
+{{ include "postgresRclone.fullname" . }}-superuser-password
 {{- end }}
 
-{{- define "postgres.service.main" -}}
-{{ include "postgres.fullname" . }}-main
+{{- define "postgresRclone.service.main" -}}
+{{ include "postgresRclone.fullname" . }}-main
 {{- end }}
 
-{{- define "postgres.dirname" -}}
-{{ .Release.Namespace }}/{{ include "postgres.fullname" . }}
+{{- define "postgresRclone.dirname" -}}
+{{ .Release.Namespace }}/{{ include "postgresRclone.fullname" . }}
 {{- end }}
 
-{{- define "postgres.test.backup" -}}
-{{ include "postgres.fullname" . }}-backup-test
+{{- define "postgresRclone.test.backup" -}}
+{{ include "postgresRclone.fullname" . }}-backup-test
 {{- end }}
 
-{{- define "postgres.test.pgbench" -}}
-{{ include "postgres.fullname" . }}-pgbench-test
+{{- define "postgresRclone.test.pgbench" -}}
+{{ include "postgresRclone.fullname" . }}-pgbench-test
 {{- end }}

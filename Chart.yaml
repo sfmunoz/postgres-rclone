@@ -3,8 +3,8 @@
 #
 
 apiVersion: v2
-name: postgres
-description: postgres
+name: postgres-rclone
+description: postgres-rclone
 type: application
 version: 0.1.0
 appVersion: "1.16.0"
