@@ -1,6 +1,7 @@
 rclone:
   image: rclone/rclone:sha-6805da6
-  rem: rem
+  # rem: include final ":" (rem:) or "/" (rem:folder/)
+  rem: "rem:postgres/"
   #conf: rclone configuration
 
 postgres:

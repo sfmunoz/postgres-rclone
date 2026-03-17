@@ -20,7 +20,7 @@ data:
     if [ "$EMPTY" != "yes" ]
     then
       LABEL="$(
-        rclone lsf "${REM}:${DNAME}" | \
+        rclone lsf "${REM}${DNAME}" | \
         sort -r | \
         awk -F '/' '/^[0-9]{8}-[0-9]{6}-[0-9A-F]{24}\/$/ {
           print $1
@@ -35,9 +35,9 @@ data:
       chown postgres:root "${PGDATA}"
       chmod 0700 "${PGDATA}"
       date
-      rclone -P cat "${REM}:${DNAME}/${LABEL}/base.tar.gz" | tar -xvzC "${PGDATA}"
+      rclone -P cat "${REM}${DNAME}/${LABEL}/base.tar.gz" | tar -xvzC "${PGDATA}"
       date
-      rclone -P cat "${REM}:${DNAME}/${LABEL}/pg_wal.tar.gz" | tar -xvzC "${PGDATA}/pg_wal"
+      rclone -P cat "${REM}${DNAME}/${LABEL}/pg_wal.tar.gz" | tar -xvzC "${PGDATA}/pg_wal"
       date
       touch "${PGDATA}/recovery.signal"
       chown postgres:postgres "${PGDATA}/recovery.signal"
@@ -85,7 +85,7 @@ data:
       echo "error: wrong START_WAL_LOCATION='${START_WAL_LOCATION}' (length is not 24)"
       exit 1
     fi
-    rclone copyto -P "/loc/${LABEL}" "${REM}:${DNAME}/${LABEL}-${START_WAL_LOCATION}"
+    rclone copyto -P "/loc/${LABEL}" "${REM}${DNAME}/${LABEL}-${START_WAL_LOCATION}"
     date
   cleanup.sh: |
     [ "$BACKUP_FULL_KEEP" = "" ] && BACKUP_FULL_KEEP="10"
@@ -94,24 +94,24 @@ data:
     set -x -e -o pipefail
     # cleanup (full backups)
     date
-    rclone lsf "${REM}:${DNAME}" | sort
+    rclone lsf "${REM}${DNAME}" | sort
     date
-    rclone lsf "${REM}:${DNAME}" | \
+    rclone lsf "${REM}${DNAME}" | \
       awk -F '/' '/^[0-9]{8}-[0-9]{6}-[0-9A-F]{24}\/$/ {
         print $1
       }' | \
       sort | \
       head -n -${BACKUP_FULL_KEEP} | \
       awk -v DNAME="${DNAME}" -v REM="${REM}" '{
-        printf("rclone -v delete %s:%s/%s\n",REM,DNAME,$1)
+        printf("rclone -v delete %s%s/%s\n",REM,DNAME,$1)
       }' | \
       sh -x -e -o pipefail
     date
-    rclone lsf "${REM}:${DNAME}" | sort
+    rclone lsf "${REM}${DNAME}" | sort
     # cleanup (WALs)
     date
     WAL_MIN="$(
-      rclone lsf "${REM}:${DNAME}" | \
+      rclone lsf "${REM}${DNAME}" | \
       sort | \
       awk -F '/' '/^[0-9]{8}-[0-9]{6}-[0-9A-F]{24}\/$/ {
         print substr($1,17)
@@ -124,19 +124,19 @@ data:
       echo "notice: cannot use WAL_MIN='${WAL_MIN}' (length is not 24)"
       exit 0
     fi
-    rclone lsf "${REM}:pg_wal" | \
+    rclone lsf "${REM}pg_wal" | \
       awk -v WAL_MIN="${WAL_MIN}" -v REM="${REM}" -F '/' '
         BEGIN {
           WAL_MIN_8 = substr(WAL_MIN,1,8)
         }
         /^[0-9A-F]{24}\.([0-9A-F]{8}\.backup\.)?gz$/ {
           if ( substr($1,1,24) < WAL_MIN ) {
-            printf("rclone -v delete %s:pg_wal/%s\n",REM,$1)
+            printf("rclone -v delete %spg_wal/%s\n",REM,$1)
           }
         }
         /^[0-9A-F]{8}\.history\.gz$/ {
           if ( substr($1,1,8) < WAL_MIN_8 ) {
-            printf("rclone -v delete %s:pg_wal/%s\n",REM,$1)
+            printf("rclone -v delete %spg_wal/%s\n",REM,$1)
           }
         }
       ' | \
@@ -164,7 +164,7 @@ data:
     wal_level = replica
     wal_compression = on
     archive_mode = on
-    archive_command = 'set -x -e -o pipefail ; gzip -c %p | rclone -P rcat ${REM}:pg_wal/%f.gz'
+    archive_command = 'set -x -e -o pipefail ; gzip -c %p | rclone -P rcat ${REM}pg_wal/%f.gz'
     archive_timeout = 30
-    restore_command = 'set -x -e -o pipefail ; rclone -P cat ${REM}:pg_wal/%f.gz | gunzip > %p'
+    restore_command = 'set -x -e -o pipefail ; rclone -P cat ${REM}pg_wal/%f.gz | gunzip > %p'
     __EOF
