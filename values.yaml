@@ -1,5 +1,6 @@
 rclone:
   image: rclone/rclone:sha-6805da6
+  #conf: rclone configuration
 
 postgres:
   password: <postgres_password>
