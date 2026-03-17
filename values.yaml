@@ -1,17 +1,5 @@
 rclone:
   image: rclone/rclone:sha-6805da6
-  conf: |
-    [rem]
-    remote = rustfs:postgres
-    type = alias
-
-    [rustfs]
-    acl = private
-    endpoint = http://192.168.56.1:9000
-    provider = Other
-    secret_access_key = rustfsadmin
-    type = s3
-    access_key_id = rustfsadmin
 
 postgres:
   password: <postgres_password>
