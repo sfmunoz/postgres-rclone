@@ -8,7 +8,7 @@ data:
   init.sh: |
     #!/bin/sh
     DNAME="full"
-    REM="{{ .Values.rclone.rem }}"
+    REM="{{ required "rclone.rem required" .Values.rclone.rem }}"
     set -x -e -o pipefail
     date
     cp /shared/rclone /usr/local/bin/rclone
@@ -58,7 +58,7 @@ data:
   backup.sh: |
     #!/bin/sh
     DNAME="full"
-    REM="{{ .Values.rclone.rem }}"
+    REM="{{ required "rclone.rem required" .Values.rclone.rem }}"
     set -x -e -o pipefail
     date
     cp /shared/rclone /usr/local/bin/rclone
@@ -90,7 +90,7 @@ data:
   cleanup.sh: |
     [ "$BACKUP_FULL_KEEP" = "" ] && BACKUP_FULL_KEEP="10"
     DNAME="full"
-    REM="{{ .Values.rclone.rem }}"
+    REM="{{ required "rclone.rem required" .Values.rclone.rem }}"
     set -x -e -o pipefail
     # cleanup (full backups)
     date
@@ -159,7 +159,7 @@ data:
     __EOF
   1_postgresql_conf.sh: |
     #!/bin/sh
-    REM="{{ .Values.rclone.rem }}"
+    REM="{{ required "rclone.rem required" .Values.rclone.rem }}"
     cat << __EOF >> "${PGDATA}/postgresql.conf"
     wal_level = replica
     wal_compression = on
