@@ -2,10 +2,20 @@ rclone:
   image: rclone/rclone:sha-6805da6
   # rem: include final ":" (rem:) or "/" (rem:folder/)
   rem: "rem:postgres/"
-  #conf: rclone configuration
+  #conf: |
+  #  [rem]
+  #  remote = rustfs:d01
+  #  type = alias
+  #  [rustfs]
+  #  acl = private
+  #  endpoint = http://192.168.56.1:9000
+  #  provider = Other
+  #  secret_access_key = rustfsadmin
+  #  type = s3
+  #  access_key_id = rustfsadmin
 
 postgres:
-  #password: <postgres_password>
+  #password: changeme
   image: postgres:18.0-alpine3.22
   empty: false     # don't try to restore old database -> create one from scratch
   #backupFullKeep: 10
