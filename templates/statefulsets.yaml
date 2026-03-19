@@ -82,6 +82,15 @@ spec:
         command: ["/bin/sh","-c"]
         args:
         - "exec /bin/sh /postgres-init/password-sync.sh"
+        env:
+        - name: PGHOST
+          value: {{ include "postgresRclone.service.main" . }}
+        - name: PGPORT
+          value: "5432"
+        - name: PGDATABASE
+          value: "postgres"
+        - name: PGUSER
+          value: "postgres"
         volumeMounts:
         - name: vol-postgres-init
           mountPath: /postgres-init

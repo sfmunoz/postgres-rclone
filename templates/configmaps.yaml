@@ -47,14 +47,31 @@ data:
     exec docker-entrypoint.sh postgres
   password-sync.sh: |
     #!/bin/sh
-    set -x
-    date
     while true
     do
-      #while ! pg_isready ; do date ; sleep 1 ; done
-      cat /postgres-password/postgres-password.txt
-      sleep 1
-      date
+      if ! pg_isready -h 127.0.0.1
+      then
+        echo "$(date -Iseconds): db not ready..."
+        sleep $((5+RANDOM%5))
+        continue
+      fi
+      echo "$(date -Iseconds): db ready..."
+      NEW_PASS="$(cat /postgres-password/postgres-password.txt)"
+      if PGPASSWORD="$NEW_PASS" psql -tAc "SELECT 1" > /dev/null 2>&1
+      then
+        echo "$(date -Iseconds): '${PGUSER}' password OK: nothing to do"
+        sleep $((20+RANDOM%20))
+        continue
+      fi
+      echo "$(date -Iseconds): '${PGUSER}' password KO: running 'ALTER USER ${PGUSER} PASSWORD ...'"
+      psql -h 127.0.0.1 -tAc "ALTER USER ${PGUSER} PASSWORD '$NEW_PASS'"
+      if [ $? -eq 0 ]
+      then
+        echo "$(date -Iseconds): password updated OK"
+      else
+        echo "$(date -Iseconds): password update failed!!"
+      fi
+      sleep $((5+RANDOM%5))
     done
 
 ---
