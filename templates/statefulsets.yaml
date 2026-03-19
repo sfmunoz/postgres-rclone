@@ -86,6 +86,9 @@ spec:
         - name: vol-postgres-init
           mountPath: /postgres-init
           readOnly: true
+        - name: vol-pass
+          mountPath: /postgres-password
+          readOnly: true
         resources:
           requests:
             memory: "256Mi"
@@ -106,5 +109,11 @@ spec:
       - name: vol-docker-entrypoint-initdb-d
         configMap:
           name: {{ include "postgresRclone.configmap.entrypoint" . }}
+      - name: vol-pass
+        secret:
+          secretName: {{ include "postgresRclone.secret.superuser.password" . }}
+          items:
+          - key: POSTGRES_PASSWORD
+            path: postgres-password.txt
       - name: vol-shared
         emptyDir: {}
