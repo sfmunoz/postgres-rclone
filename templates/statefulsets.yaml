@@ -77,6 +77,22 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "200m"
+      - name: {{ include "postgresRclone.name" . }}-password-sync
+        image: {{ .Values.postgres.image }}
+        command: ["/bin/sh","-c"]
+        args:
+        - "exec /bin/sh /postgres-init/password-sync.sh"
+        volumeMounts:
+        - name: vol-postgres-init
+          mountPath: /postgres-init
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
       volumes:
       - name: vol-c
         secret:

@@ -45,6 +45,17 @@ data:
     fi
     date
     exec docker-entrypoint.sh postgres
+  password-sync.sh: |
+    #!/bin/sh
+    set -x
+    date
+    while true
+    do
+      #while ! pg_isready ; do date ; sleep 1 ; done
+      cat /postgres-password/postgres-password.txt
+      sleep 1
+      date
+    done
 
 ---
 
