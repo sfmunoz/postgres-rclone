@@ -1,3 +1,9 @@
+postgres:
+  image: postgres:18.0-alpine3.22
+  empty: false     # don't try to restore old database -> create one from scratch
+  #backupFullKeep: 10
+  #terminationGracePeriodSeconds: 60
+
 rclone:
   image: rclone/rclone:sha-6805da6
   # rem: include final ":" (rem:) or "/" (rem:folder/)
@@ -13,13 +19,6 @@ rclone:
   #  secret_access_key = rustfsadmin
   #  type = s3
   #  access_key_id = rustfsadmin
-
-postgres:
-  image: postgres:18.0-alpine3.22
-  empty: false     # don't try to restore old database -> create one from scratch
-  #password: changeme
-  #backupFullKeep: 10
-  #terminationGracePeriodSeconds: 60
 
 podLabels:
   app: db-server
