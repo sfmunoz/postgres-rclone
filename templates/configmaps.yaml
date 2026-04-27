@@ -35,9 +35,9 @@ data:
       chown postgres:root "${PGDATA}"
       chmod 0700 "${PGDATA}"
       date
-      rclone -P cat "${REM}${DNAME}/${LABEL}/base.tar.gz" | tar -xvzC "${PGDATA}"
+      rclone cat "${REM}${DNAME}/${LABEL}/base.tar.gz" | tar -xvzC "${PGDATA}"
       date
-      rclone -P cat "${REM}${DNAME}/${LABEL}/pg_wal.tar.gz" | tar -xvzC "${PGDATA}/pg_wal"
+      rclone cat "${REM}${DNAME}/${LABEL}/pg_wal.tar.gz" | tar -xvzC "${PGDATA}/pg_wal"
       date
       touch "${PGDATA}/recovery.signal"
       chown postgres:postgres "${PGDATA}/recovery.signal"
@@ -113,7 +113,7 @@ data:
       echo "error: wrong START_WAL_LOCATION='${START_WAL_LOCATION}' (length is not 24)"
       exit 1
     fi
-    rclone copyto -P "/loc/${LABEL}" "${REM}${DNAME}/${LABEL}-${START_WAL_LOCATION}"
+    rclone copyto "/loc/${LABEL}" "${REM}${DNAME}/${LABEL}-${START_WAL_LOCATION}"
     date
   cleanup.sh: |
     [ "$BACKUP_FULL_KEEP" = "" ] && BACKUP_FULL_KEEP="10"
@@ -192,7 +192,7 @@ data:
     wal_level = replica
     wal_compression = on
     archive_mode = on
-    archive_command = 'set -x -e -o pipefail ; gzip -c %p | rclone -P rcat ${REM}pg_wal/%f.gz'
+    archive_command = 'set -x -e -o pipefail ; gzip -c %p | rclone rcat ${REM}pg_wal/%f.gz'
     archive_timeout = 30
-    restore_command = 'set -x -e -o pipefail ; rclone -P cat ${REM}pg_wal/%f.gz | gunzip > %p'
+    restore_command = 'set -x -e -o pipefail ; rclone cat ${REM}pg_wal/%f.gz | gunzip > %p'
     __EOF
