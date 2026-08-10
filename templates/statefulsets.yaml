@@ -108,9 +108,9 @@ spec:
       volumes:
       - name: vol-c
         secret:
-          secretName: {{ include "postgresRclone.secret.rclone.conf" . }}
+          secretName: {{ required "rclone.conf.name required" .Values.rclone.conf.name }}
           items:
-          - key: rcloneConf
+          - key: {{ required "rclone.conf.key required" .Values.rclone.conf.key }}
             path: rclone.conf
       - name: vol-postgres-init
         configMap:

@@ -73,10 +73,6 @@ Create the name of the service account to use
 {{ include "postgresRclone.fullname" . }}-entrypoint
 {{- end }}
 
-{{- define "postgresRclone.secret.rclone.conf" -}}
-{{ include "postgresRclone.fullname" . }}-rclone-conf
-{{- end }}
-
 {{- define "postgresRclone.secret.superuser.password" -}}
 {{ include "postgresRclone.fullname" . }}-superuser-password
 {{- end }}
